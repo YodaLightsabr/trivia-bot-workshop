@@ -1,6 +1,10 @@
 const Discord = require('discord.js');
 const Trivia = require('trivia-api');
 const { decode } = require('html-entities');
+const fs = require('fs');
+
+const hydraHacksGuildId = `981946685620117554`;
+const embedColor = '#332e91';
 
 const express = require('express');
 const app = express();
@@ -32,10 +36,10 @@ let triviaCommand = {
 client.on('ready', () => {
     console.log('Logged in as', client.user.tag);
     client.api.applications(client.user.id)
-        .guilds('933959461003989012')
+        .guilds(hydraHacksGuildId)
         .commands.post({ data: triviaCommand })
     client.api.applications(client.user.id)
-        .guilds('933959461003989012')
+        .guilds(hydraHacksGuildId)
         .commands.post({ data: {
             name: 'dino',
             description: 'Get a dinosaur',
@@ -56,7 +60,7 @@ client.on('interactionCreate', interaction => {
             ].sort(() => Math.random() * 0.5)
             interaction.reply({
                 embeds: [
-                    new Discord.MessageEmbed().setTitle(question.category).setDescription(decode(question.question)).setFooter(question.difficulty).setColor('#ff33dd')
+                    new Discord.MessageEmbed().setTitle(question.category).setDescription(decode(question.question)).setFooter(question.difficulty).setColor(embedColor)
                 ],
                 components: [
                     {
@@ -92,7 +96,7 @@ client.on('interactionCreate', interaction => {
 })
 
 
-client.login(process.env.TOKEN);
+client.login(process.env.TOKEN || fs.readFileSync('token', 'utf8'));
 
 app.listen(8080, () => {
     console.log('HTTP server ready!');
